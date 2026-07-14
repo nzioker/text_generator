@@ -1,21 +1,26 @@
-from pydantic import BaseModel, Field, field_validator
-from uuid import UUID
+import email
+from sqlalchemy import Column, String, ForeignKey, Integer
+from sqlalchemy.orm import declarative_base, relationship
 
 
-class User(BaseModel):
-    id: UUID
-    names: str
-    email: str
-    password: str
+Base = declarative_base()
+
+class User(Base):
+    __tablename__ = "users"
+
+    id = Column(Integer, primary_key=True)
+    names = Column(String, unique=True, index=True)
+    email = Column(String)
+    password = Column(String)
+    generations = relationship("Generations", back_populates="user")
 
 
-class Generations(BaseModel):
-    gen_id:UUID
-    prompt: str
-    response: str
-    created_at: str
+class Generations(Base):
+    __tablename__ = "generation"
 
-
-# class UserPrompts(BaseModel):
-#     prompt_id: UUID
-#     prompt_used: str
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey("users.id")) 
+    prompt = Column(String, index=True)
+    response = Column(String, index=True)
+    created_at = Column(index=True)
+    user = relationship("User", back_populates="gen_id")
