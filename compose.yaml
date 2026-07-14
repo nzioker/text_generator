@@ -1,0 +1,45 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: postgres_db 
+    ports:
+      - "5432:5432" 
+    environment:
+      POSTGRES_USER: user 
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: myDatabase
+
+  redis:
+    image: redis:alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+  
+  web:
+    build: .
+    container_name: fastapi_api
+    ports:
+      - "8000:8000"
+    environment: 
+      - DATABASE_URL=postgresql://user:mypassword@db:5432/myDatabase
+      - REDIS_URL=redis://redis:6379/0
+
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+      - redis
+
+  ai:
+    image: ollama/ollama:latest
+    container_name: text_generator
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_storage:/root/.ollama
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+  ollama_storage:
+
