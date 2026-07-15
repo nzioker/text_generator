@@ -23,7 +23,7 @@ services:
     environment: 
       - DATABASE_URL=postgresql://user:mypassword@db:5432/myDatabase
       - REDIS_URL=redis://redis:6379/0
-
+      - PYTHONPATH=/code
     volumes:
       - .:/app
     depends_on:
