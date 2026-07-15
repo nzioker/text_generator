@@ -10,9 +10,9 @@ class User(Base):
     __tablename__ = "users"
 
     id = Column(Integer, primary_key=True)
-    names = Column(String(100), index=True)
-    email = Column(String(50), unique=True)
-    password = Column(String(100))
+    names = Column(String(100), index=True, nullable=False)
+    email = Column(String(50), unique=True, nullable=False)
+    password = Column(String(100), nullable=False)
     generations = relationship("Generations", back_populates="user")
 
 
@@ -24,4 +24,4 @@ class Generations(Base):
     prompt = Column(String, index=True)
     response = Column(String, index=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
-    user = relationship("User", back_populates="gen_id")
+    user = relationship("User", back_populates="generations")

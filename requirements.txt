@@ -4,3 +4,5 @@ fastapi[standard]==0.115.0
 pydantic==2.9.0
 SQLAlchemy>=2.0.0
 httpx
+bcrypt
+PyJWT
