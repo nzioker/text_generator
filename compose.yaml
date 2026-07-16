@@ -3,17 +3,17 @@ services:
     image: postgres:16-alpine
     container_name: postgres_db 
     ports:
-      - "5432:5432" 
+      - "${DB_PORT}:5432" 
     environment:
-      POSTGRES_USER: user 
-      POSTGRES_PASSWORD: mypassword
-      POSTGRES_DB: myDatabase
+      POSTGRES_USER: ${POSTGRES_USER} 
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
 
   redis:
     image: redis:alpine
     container_name: redis
     ports:
-      - "6379:6379"
+      - "${REDIS_PORT}:6379"
   
   web:
     build: .
@@ -21,8 +21,8 @@ services:
     ports:
       - "8000:8000"
     environment: 
-      - DATABASE_URL=postgresql://user:mypassword@db:5432/myDatabase
-      - REDIS_URL=redis://redis:6379/0
+      - DATABASE_URL=${DATABASE_URL}
+      - REDIS_URL=${REDIS_URL}
       - PYTHONPATH=/code
     volumes:
       - .:/app
@@ -34,7 +34,7 @@ services:
     image: ollama/ollama:latest
     container_name: text_generator
     ports:
-      - "11434:11434"
+      - "${AI_PORT}:11434"
     volumes:
       - ollama_storage:/root/.ollama
     restart: unless-stopped

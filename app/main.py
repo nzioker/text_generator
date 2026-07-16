@@ -13,11 +13,12 @@ import redis
 from app.utils.security import password_hash, verify_password
 from app.utils.auth import create_access_token
 from app.utils.auth import get_current_user_id
+from dotenv import load_dotenv
 
 from schemas import GenerationRequest, UserCreate
 
-
-REDIS_URL = os.getenv("REDIS_URL", "redis://redis:6379/0")
+load_dotenv()
+REDIS_URL = os.getenv("REDIS_URL")
 redis_client = redis.Redis.from_url(REDIS_URL, decode_responses=True)
 
 

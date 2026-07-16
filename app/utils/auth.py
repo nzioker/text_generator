@@ -4,9 +4,12 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from datetime import datetime, timedelta, timezone
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Secret keys are used to digitally sign the token so users cannot forge or edit them
-SECRET_KEY = os.getenv("JWT_SECRET_KEY", "super_secret_development_key_change_me_in_production")
+SECRET_KEY = os.getenv("JWT_SECRET_KEY")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
 
