@@ -15,8 +15,12 @@ from app.utils.security import password_hash, verify_password
 from app.utils.auth import create_access_token
 from app.utils.auth import get_current_user_id
 from dotenv import load_dotenv
+from app.logging_config import setup_logging
+import logging
 
 from schemas import GenerationRequest, UserCreate
+
+logger = logging.getLogger("app")
 
 load_dotenv()
 REDIS_URL = os.getenv("REDIS_URL")
@@ -26,6 +30,8 @@ redis_client = redis.Redis.from_url(REDIS_URL, decode_responses=True)
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     create_tables()
+    setup_logging()
+    logger.info("Logging system initialized. Application is booting up...")
     # Create User
     db = sessionLocal()
     try:
@@ -42,6 +48,7 @@ async def lifespan(app: FastAPI):
     finally:
         db.close()
     yield
+    logger.info("Application is shutting down.")
 
 app = FastAPI(lifespan=lifespan)
 
@@ -72,7 +79,7 @@ def login(payload:UserCreate, db: Session = Depends(get_db)):
     existing_user = db.query(User).filter(User.email == payload.email).first()
 
     if not existing_user:
-        raise HTTPException(status=status.HTTP_401_UNAUTHORIZED, detail="Invalid email or password")
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid email or password")
     
     password_match = verify_password(payload.password, existing_user.password)
     if not password_match:
@@ -83,7 +90,7 @@ def login(payload:UserCreate, db: Session = Depends(get_db)):
 
     return {
         "access_token": access_token,
-        "token_type": "bearer_token",
+        "token_type": "bearer",
         "message": "Login succesfull"
     }
     
