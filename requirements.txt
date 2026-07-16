@@ -6,3 +6,4 @@ SQLAlchemy>=2.0.0
 httpx
 bcrypt
 PyJWT
+python-dotenv==1.0.1

@@ -10,6 +10,7 @@ from app.models import Generations, User
 from app.database.database import get_db, sessionLocal
 from sqlalchemy.orm import Session
 import redis
+from app.utils.dependencies import rate_limiter
 from app.utils.security import password_hash, verify_password
 from app.utils.auth import create_access_token
 from app.utils.auth import get_current_user_id
@@ -97,7 +98,7 @@ def home():
     return "This is home."
 
 
-@app.post("/generate")
+@app.post("/generate", dependencies=[Depends(rate_limiter)])
 async def generate(payload: GenerationRequest, db: Session = Depends(get_db), current_user_id: int = Depends(get_current_user_id)):
 
     llama_url = "http://ai:11434/api/generate"
